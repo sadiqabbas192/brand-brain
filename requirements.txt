@@ -1,7 +1,7 @@
-ipykernel
-psycopg2-binary
-pinecone
 google-genai
+pinecone-client
+psycopg2
 python-dotenv
-pandas
 langchain-text-splitters
+numpy
+pandas
