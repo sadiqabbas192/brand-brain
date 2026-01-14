@@ -14,25 +14,27 @@ def extract_assets(brand_data: Dict) -> List[Dict]:
     brand_id = brand_data.get("brandId")
     
     mapping = {
-        "mission": ("guideline", "strategy"),
-        "brandVoice": ("guideline", "brand_voice"),
-        "visualStyle": ("guideline", "brand_voice"),
-        "audience": ("guideline", "strategy"),
-        "competitors": ("guideline", "strategy"),
-        "inspiration": ("guideline", "strategy"),
-        "website": ("website", "strategy")
+        "mission": ("guideline", "strategy", "Mission"),
+        "brandVoice": ("guideline", "brand_voice", "Brand Voice"),
+        "visualStyle": ("guideline", "brand_voice", "Visual Style"),
+        "audience": ("guideline", "strategy", "Target Audience"),
+        "competitors": ("guideline", "strategy", "Competitors"),
+        "inspiration": ("guideline", "strategy", "Inspiration"),
+        "website": ("website", "strategy", "Website")
     }
     
-    for field, (asset_type, vector_type) in mapping.items():
+    for field, (asset_type, vector_type, label) in mapping.items():
         content = brand_data.get(field)
         if content:
+            # Prepend Label for better semantic context
+            enriched_content = f"{label}: {content}"
             assets.append({
                 "asset_id": str(uuid.uuid4()),
                 "brand_id": brand_id,
                 "asset_type": asset_type,
                 "vector_type": vector_type,
                 "source_field": field,
-                "content": content
+                "content": enriched_content
             })
             
     return assets

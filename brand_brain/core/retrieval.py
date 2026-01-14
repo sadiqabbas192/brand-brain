@@ -2,6 +2,7 @@ import uuid
 from typing import List, Dict, Optional
 from ..database import get_db_connection, get_pinecone_client
 from ..services.embedding import generate_query_embedding
+from ..config import print_debug
 
 def retrieve_context(brand_name_str: str, query: str, vector_type: str = "brand_voice", top_k: int = 3) -> List[Dict]:
     if brand_name_str == "wh_india_001":
@@ -11,7 +12,7 @@ def retrieve_context(brand_name_str: str, query: str, vector_type: str = "brand_
         brand_uuid = brand_name_str
         org_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, 'default_org'))
 
-    print(f"\n🔎 Querying Brand {brand_name_str} (UUID: {brand_uuid}) [{vector_type}]: '{query}'")
+    print_debug(f"\n🔎 Querying Brand {brand_name_str} (UUID: {brand_uuid}) [{vector_type}]: '{query}'")
     
     query_embedding = generate_query_embedding(query)
     if not query_embedding:
@@ -31,7 +32,7 @@ def retrieve_context(brand_name_str: str, query: str, vector_type: str = "brand_
     )
     
     if not results['matches']:
-        print("   ⚠️ No matches found in namespace:", namespace)
+        print_debug("   ⚠️ No matches found in namespace:", namespace)
         return []
         
     conn = get_db_connection()
@@ -89,7 +90,7 @@ def retrieve_context(brand_name_str: str, query: str, vector_type: str = "brand_
         final_results = valid_candidates[:top_k]
         
         for i, res in enumerate(final_results):
-            print(f"   [{i+1}] [{res['confidence'].upper()}] Score: {res['score']:.4f} | Content: {res['content'][:100]}...")
+            print_debug(f"   [{i+1}] [{res['confidence'].upper()}] Score: {res['score']:.4f} | Content: {res['content'][:100]}...")
             retrieved_docs.append(res)
             
     cur.close()

@@ -16,7 +16,7 @@ def chunk_text(text: str) -> List[str]:
 
 def generate_embedding(text: str, title: str = "Brand Asset", task_type: str = "RETRIEVAL_DOCUMENT") -> List[float]:
     """Generates 768-dim embeddings using gemini-embedding-001."""
-    client = get_gemini_client()
+    client, _ = get_gemini_client()
     try:
         # Note: 'title' is only valid for RETRIEVAL_DOCUMENT task type
         config = {
