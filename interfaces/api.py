@@ -1,11 +1,12 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from pydantic import BaseModel
 from typing import List, Union, Optional
 import logging
 
 from brand_brain.core.orchestrator import chat_session
+from security import verify_api_key
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(verify_api_key)])
 
 # --- Schemas ---
 
@@ -32,11 +33,15 @@ class BrandResponse(BaseModel):
 
 # --- Routes ---
 
-@router.get("/brands", response_model=BrandResponse)
+# --- Routes ---
+
+@router.get("/brands", response_model=BrandResponse, tags=["Brand Brain Routes"])
 def get_supported_brands():
     """
-    Returns static list of supported brands.
-    No core dependency.
+    **Get Supported Brands**
+    
+    Returns a list of brands configured in the brain.
+    Current support: *Westinghouse India* only.
     """
     return BrandResponse(
         brands=[
@@ -44,8 +49,15 @@ def get_supported_brands():
         ]
     )
 
-@router.post("/ask", response_model=AskResponse)
+@router.post("/ask", response_model=AskResponse, tags=["Brand Brain Routes"])
 def ask_brand_brain(request: AskRequest):
+    """
+    **Ask Brand Brain**
+    
+    Submit a natural language question to the Brand Brain.
+    - **brand_id**: Required (e.g., 'wh_india_001')
+    - **question**: The query text
+    """
     try:
         # 1. Invoke Brand Brain Orchestrator
         # chat_session handles retrieval, reasoning, and validation
