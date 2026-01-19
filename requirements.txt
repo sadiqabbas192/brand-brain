@@ -1,5 +1,5 @@
 google-genai
-pinecone-client
+pinecone
 psycopg2-binary
 python-dotenv
 langchain-text-splitters

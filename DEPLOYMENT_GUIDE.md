@@ -48,6 +48,15 @@ Key variables likely include:
 > [!IMPORTANT]
 > Ensure your `POSTGRES_HOST` is accessible from the internet (e.g., Supabase, Neon, or a cloud RDS with public access), as Vercel is a cloud environment.
 
+### Note on Branch Selection
+
+Vercel defaults to the `main` branch for the initial import. **This is normal.**
+
+1. Fill in your Environment Variables.
+2. Click **Deploy** (it might run `main` and fail; that is okay).
+3. Once the project is created, go to **Settings** -> **Git** -> **Production Branch** and change it to `deployment/vercel`.
+4. Go to the **Deployments** tab and redeploy the `deployment/vercel` branch.
+
 ## 5. Deploy
 
 1. Click **"Deploy"**.
