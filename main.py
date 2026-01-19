@@ -139,10 +139,38 @@ def ask_brand_brain():
     Interactive Brand Brain chat loop.
     """
     from brand_brain.core.orchestrator import chat_session
+    from brand_brain.services.brand_service import get_all_brands
     
     print("\n👋 Welcome to Brand Brain")
-    print("Type 'exit' to stop.\n")
+    
+    # Brand Selection
+    brands = get_all_brands()
+    if not brands:
+        print("❌ No brands found in the database. Please ingest a brand first.")
+        return
 
+    print("Available Brands:")
+    for idx, brand in enumerate(brands, 1):
+        print(f"{idx}. {brand['name']}")
+    
+    selected_brand_id = None
+    while not selected_brand_id:
+        try:
+            choice = input("\nSelect a brand (enter number): ").strip()
+            if choice.lower() in ['exit', 'quit']:
+                return
+            idx = int(choice) - 1
+            if 0 <= idx < len(brands):
+                selected_brand_id = brands[idx]['brand_id']
+                print(f"✅ Selected Brand: {brands[idx]['name']}")
+            else:
+                print("❌ Invalid selection. Please try again.")
+        except ValueError:
+            print("❌ Please enter a valid number.")
+
+    print(f"\nStarting chat for brand ID: {selected_brand_id}")
+    print("Type 'exit' to stop.\n")
+    
     while True:
         try:
             user_query = input("You: ").strip()
@@ -165,7 +193,7 @@ def ask_brand_brain():
             # We can run it unconditionally, accepting that debug mode will look messy (which is expected for debug).
             
             with LoadingAnimation():
-                response = chat_session(user_query)
+                response = chat_session(user_query, brand_id=selected_brand_id)
             
             # Extract intent safely
             intent = response.get("intent", "knowledge")
