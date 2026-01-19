@@ -1,6 +1,6 @@
 google-genai
 pinecone-client
-psycopg2
+psycopg2-binary
 python-dotenv
 langchain-text-splitters
 numpy
