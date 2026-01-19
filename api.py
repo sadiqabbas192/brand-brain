@@ -4,14 +4,37 @@ from brand_brain.config import DEBUG_MODE
 import uvicorn
 import logging
 
+import logging.config
+
 from middleware import request_lifecycle_middleware
 
 # --- Logging Configuration ---
-logging.basicConfig(
-    level=logging.INFO,
-    format="[%(asctime)s] %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S"
-)
+LOGGING_CONFIG = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "default": {
+            "format": "[%(asctime)s] [%(levelname)s] %(name)s | %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "default",
+        },
+    },
+    "loggers": {
+        "root": {"handlers": ["console"], "level": "INFO"},
+        "brand_brain": {"handlers": ["console"], "level": "INFO", "propagate": False},
+        # Silence Noise
+        "google": {"level": "WARNING"},
+        "httpcore": {"level": "WARNING"},
+        "httpx": {"level": "WARNING"},
+        "urllib3": {"level": "WARNING"},
+    },
+}
+logging.config.dictConfig(LOGGING_CONFIG)
 
 app = FastAPI(
     title="Brand Brain API",
